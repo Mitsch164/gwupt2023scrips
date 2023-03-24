@@ -23,8 +23,7 @@ function fillResortListeGesamt() {
         while (nameGegenStandinZeile) {
 
             // copy Name
-            let gegenstandNameResort = sheetResort.getRange(currentIndexResort, 1).getValue();
-            sheetGesamt.getRange(currentIndexGesamt, 2).setValue(gegenstandNameResort);
+            sheetGesamt.getRange(currentIndexGesamt, 2).setValue(nameGegenStandinZeile);
 
             // Fill Resortname
             sheetGesamt.getRange(currentIndexGesamt, 4).setValue(resortName);
