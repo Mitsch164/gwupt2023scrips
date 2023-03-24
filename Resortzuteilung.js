@@ -1,15 +1,14 @@
-// Stand 25.02.23
-const MAX_ROWS = 500;
+// Stand 24.03.23
 
 
 function resortzuteilungErmitteln() {
 
-    var sheetGeamt = SpreadsheetApp.getActive().getSheetByName('Gesamt');
+    var sheetGesamt = SpreadsheetApp.getActive().getSheetByName('Gesamt');
     var sheetResortlisteKomplett = SpreadsheetApp.getActive().getSheetByName('Resortliste komplett');
 
     // Resorts für jeden Gegenstand auf ResortlisteGesamt ermitteln
     var gegenstandZuResorts = {};
-    var resortListeGesamtGegenstaende = sheetResortlisteKomplett.getRange(5, 1, MAX_ROWS).getValues();
+    var resortListeGesamtGegenstaende = sheetResortlisteKomplett.getRange(5, 2, MAX_ROWS).getValues();
     var resortListeGesamtResorts = sheetResortlisteKomplett.getRange(5, 4, MAX_ROWS).getValues();
 
     for (let row = 0; row < MAX_ROWS; row++) {
@@ -28,8 +27,8 @@ function resortzuteilungErmitteln() {
     //console.log(JSON.stringify(gegenstandZuResorts));
 
     // Zuteilung in Gesamtliste eintragen
-    var gesamtListeGegenstaende = sheetGeamt.getRange(7, 1, MAX_ROWS).getValues();
-    var gesamtListeResorts = sheetGeamt.getRange(7, 4, MAX_ROWS);
+    var gesamtListeGegenstaende = sheetGesamt.getRange(7, 2, MAX_ROWS).getValues();
+    var gesamtListeResorts = sheetGesamt.getRange(7, 4, MAX_ROWS);
 
     for (let row = 0; row < MAX_ROWS; row++) {
         let gegenstandName = gesamtListeGegenstaende[row][0];
@@ -48,9 +47,7 @@ function resortzuteilungErmitteln() {
     }
 
     // Stand eintragen
-    var standFormatted = Utilities.formatDate(new Date(), "GMT+2", "dd.MM.YYYY");
-    var standCell = sheetGeamt.getRange("B2").getCell(1,1);
-    standCell.setValue(standFormatted);
+    printStandInZelle("C2", sheetGesamt);
 
     Browser.msgBox("Resortzuteilung erfolgreich");
 }
