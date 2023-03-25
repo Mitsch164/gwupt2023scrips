@@ -4,8 +4,18 @@ const RESORT_LISTE_START_ROW = 8;
 const GESAMT_LISTE_START_ROW = 18;
 
 const SHEET_NAME_TO_RESORT_NAME = {
-    'Resort Material Import': 'Material'
-
+    'Resort Material Import': 'Material',
+    'Resort Bar Import': 'Bar',
+    'Resort Küche Import': 'Küche',
+    'Resort ÖffArbeit Import': 'ÖffArbeit',
+    'Resort NotfallMgmt Import': 'NotfallMgmt',
+    'Resort PL Import': 'Projektleitung',
+    'Resort Inhalt Import': 'Inhalt',
+    'Resort Orga Import': 'Orga',
+    'AK Jupfis': 'AK Jupfis',
+    'AK Wölis': 'AK Wölis',
+    'AK Pfadis': 'AK Pfadis',
+    'AK Rover': 'AK Rover'
 };
 
 function fillResortListeGesamt() {
@@ -16,30 +26,37 @@ function fillResortListeGesamt() {
         console.log('Starte Verarbeitung von Sheet: ' + sheetName);
 
         var sheetResort = SpreadsheetApp.getActive().getSheetByName(sheetName);
-        var currentIndexResort = RESORT_LISTE_START_ROW;
+        var maxRowResort = RESORT_LISTE_START_ROW;
 
-        // Alle Zeilen schreiben bei denen ein Name ausgefüllt ist
-        var nameGegenStandinZeile = sheetResort.getRange(currentIndexResort, 1).getValue();
+        // Letzte ausgefüllte Zeile ermitteln
+        var nameGegenStandinZeile = sheetResort.getRange(maxRowResort, 1).getValue();
         while (nameGegenStandinZeile) {
+            maxRowResort++;
+            nameGegenStandinZeile = sheetResort.getRange(maxRowResort, 1).getValue();
+        }
+        console.log(maxRowResort);
+        var anzahlZeilen = maxRowResort - RESORT_LISTE_START_ROW;
 
-            // copy Name
-            sheetGesamt.getRange(currentIndexGesamt, 2).setValue(nameGegenStandinZeile);
-
-            // Fill Resortname
-            sheetGesamt.getRange(currentIndexGesamt, 4).setValue(resortName);
-
-            // copy restliche Spalten
-            let restData = sheetResort.getRange(currentIndexResort, 2, 1, 11).getValues();
-            sheetGesamt.getRange(currentIndexGesamt, 5, 1, 11).setValues(restData);
-
-            // Indizes hochzählen und nächste Nameszeile befüllen
-            currentIndexResort++;
-            currentIndexGesamt++;
-
-            nameGegenStandinZeile = sheetResort.getRange(currentIndexResort, 1).getValue();
+        if (anzahlZeilen == 0) {
+            console.log('Überspringe Leere Liste von Resort ' + resortName);
+            continue;
         }
 
-        console.log('Finished Resort ' + resortName + ' mit ' + (currentIndexGesamt - GESAMT_LISTE_START_ROW) + ' Zeilen');
+        // Fill GegenstandName
+        var resorGegenstaende = sheetResort.getRange(RESORT_LISTE_START_ROW, 1, anzahlZeilen, 1).getValues();
+        sheetGesamt.getRange(currentIndexGesamt, 2, anzahlZeilen, 1).setValues(resorGegenstaende);
+
+        // Fill Resort name
+        sheetGesamt.getRange(currentIndexGesamt, 4, anzahlZeilen, 1).setValue(resortName);
+
+        // copy restliche Spalten
+        let restData = sheetResort.getRange(RESORT_LISTE_START_ROW, 2, anzahlZeilen, 11).getValues();
+        sheetGesamt.getRange(currentIndexGesamt, 5, anzahlZeilen, 11).setValues(restData);
+
+        // Indizes hochzählen
+        currentIndexGesamt = currentIndexGesamt + anzahlZeilen;
+
+        console.log('Verarbeitung Resort ' + resortName + ' mit ' + anzahlZeilen + ' Zeilen abgeschlossen');
     }
 
     // Stand befüllen
