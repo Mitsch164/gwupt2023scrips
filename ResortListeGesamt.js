@@ -29,10 +29,10 @@ function fillResortListeGesamt() {
         var maxRowResort = RESORT_LISTE_START_ROW;
 
         // Letzte ausgefüllte Zeile ermitteln
-        var nameGegenStandinZeile = sheetResort.getRange(maxRowResort, 1).getValue();
+        var nameGegenStandinZeile = sheetResort.getRange(maxRowResort, 2).getValue();
         while (nameGegenStandinZeile) {
             maxRowResort++;
-            nameGegenStandinZeile = sheetResort.getRange(maxRowResort, 1).getValue();
+            nameGegenStandinZeile = sheetResort.getRange(maxRowResort, 2).getValue();
         }
         console.log(maxRowResort);
         var anzahlZeilen = maxRowResort - RESORT_LISTE_START_ROW;
@@ -43,15 +43,18 @@ function fillResortListeGesamt() {
         }
 
         // Fill GegenstandName
-        var resorGegenstaende = sheetResort.getRange(RESORT_LISTE_START_ROW, 1, anzahlZeilen, 1).getValues();
+        var resorGegenstaende = sheetResort.getRange(RESORT_LISTE_START_ROW, 2, anzahlZeilen, 1).getValues();
         sheetGesamt.getRange(currentIndexGesamt, 2, anzahlZeilen, 1).setValues(resorGegenstaende);
 
         // Fill Resort name
         sheetGesamt.getRange(currentIndexGesamt, 4, anzahlZeilen, 1).setValue(resortName);
 
         // copy restliche Spalten
-        let restData = sheetResort.getRange(RESORT_LISTE_START_ROW, 2, anzahlZeilen, 11).getValues();
+        let restData = sheetResort.getRange(RESORT_LISTE_START_ROW, 3, anzahlZeilen, 11).getValues();
         sheetGesamt.getRange(currentIndexGesamt, 5, anzahlZeilen, 11).setValues(restData);
+
+        // kopierte Zeilen in Resortliste markieren
+        sheetResort.getRange(RESORT_LISTE_START_ROW, 1, anzahlZeilen, 1).setValue('x');
 
         // Indizes hochzählen
         currentIndexGesamt = currentIndexGesamt + anzahlZeilen;
