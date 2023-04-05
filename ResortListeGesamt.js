@@ -1,4 +1,4 @@
-// Stand 24.03.23
+// Stand 05.04.23
 
 const RESORT_LISTE_START_ROW = 8;
 const GESAMT_LISTE_START_ROW = 18;
@@ -34,13 +34,14 @@ function fillResortListeGesamt() {
             maxRowResort++;
             nameGegenStandinZeile = sheetResort.getRange(maxRowResort, 2).getValue();
         }
-        console.log(maxRowResort);
+
         var anzahlZeilen = maxRowResort - RESORT_LISTE_START_ROW;
 
         if (anzahlZeilen == 0) {
             console.log('Überspringe Leere Liste von Resort ' + resortName);
             continue;
-        }
+        }        
+        console.log(anzahlZeilen);
 
         // Fill GegenstandName
         var resorGegenstaende = sheetResort.getRange(RESORT_LISTE_START_ROW, 2, anzahlZeilen, 1).getValues();
@@ -50,8 +51,8 @@ function fillResortListeGesamt() {
         sheetGesamt.getRange(currentIndexGesamt, 4, anzahlZeilen, 1).setValue(resortName);
 
         // copy restliche Spalten
-        let restData = sheetResort.getRange(RESORT_LISTE_START_ROW, 3, anzahlZeilen, 11).getValues();
-        sheetGesamt.getRange(currentIndexGesamt, 5, anzahlZeilen, 11).setValues(restData);
+        let restData = sheetResort.getRange(RESORT_LISTE_START_ROW, 3, anzahlZeilen, 13).getValues();
+        sheetGesamt.getRange(currentIndexGesamt, 5, anzahlZeilen, 13).setValues(restData);
 
         // kopierte Zeilen in Resortliste markieren
         sheetResort.getRange(RESORT_LISTE_START_ROW, 1, anzahlZeilen, 1).setValue('x');
