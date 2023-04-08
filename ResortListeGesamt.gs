@@ -1,7 +1,5 @@
-// Stand 05.04.23
+// Stand 08.04.23
 
-const RESORT_LISTE_START_ROW = 8;
-const GESAMT_LISTE_START_ROW = 18;
 
 const SHEET_NAME_TO_RESORT_NAME = {
     'Resort Material Import': 'Material',
@@ -20,7 +18,7 @@ const SHEET_NAME_TO_RESORT_NAME = {
 
 function fillResortListeGesamt() {
     var sheetGesamt = SpreadsheetApp.getActive().getSheetByName('Resortliste komplett');
-    var currentIndexGesamt = GESAMT_LISTE_START_ROW;
+    var currentIndexGesamt = RESORT_GESAMT_LISTE_START_ROW;
 
     for (const[sheetName, resortName]of Object.entries(SHEET_NAME_TO_RESORT_NAME)) {
         console.log('Starte Verarbeitung von Sheet: ' + sheetName);
@@ -55,6 +53,7 @@ function fillResortListeGesamt() {
         sheetGesamt.getRange(currentIndexGesamt, 5, anzahlZeilen, 13).setValues(restData);
 
         // kopierte Zeilen in Resortliste markieren
+        sheetResort.getRange(RESORT_LISTE_START_ROW, 1, MAX_ROWS, 1).clearContent();
         sheetResort.getRange(RESORT_LISTE_START_ROW, 1, anzahlZeilen, 1).setValue('x');
 
         // Indizes hochzählen
@@ -66,5 +65,5 @@ function fillResortListeGesamt() {
     // Stand befüllen
     printStandInZelle("C2", sheetGesamt);
 
-    Browser.msgBox('Befüllung ResortListeGesamt mit ' + (currentIndexGesamt - GESAMT_LISTE_START_ROW) + ' Zeilen erfolgreich');
+    Browser.msgBox('Befüllung ResortListeGesamt mit ' + (currentIndexGesamt - RESORT_GESAMT_LISTE_START_ROW) + ' Zeilen erfolgreich');
 }
