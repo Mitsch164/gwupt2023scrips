@@ -20,3 +20,24 @@ function mergeMap(map, key, valueData) {
     valueInMap.push(valueData);
     map[key] = valueInMap;
 }
+
+function convertIn2dArray(data) {
+    let result = [];
+    data.forEach(row => {
+        let innerArray = [];
+        innerArray.push(row);
+        result.push(innerArray);
+    });
+    return result;
+}
+
+function convertIn2dArrayAndJoinData(data) {
+    let result = [];
+    data.forEach(row => {
+        let innerArray = [];
+        let dataFilteredAndJoined = row.filter(Boolean).join(',');
+        innerArray.push(dataFilteredAndJoined);
+        result.push(innerArray);
+    });
+    return result;
+}

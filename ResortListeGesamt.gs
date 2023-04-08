@@ -20,7 +20,7 @@ function fillResortListeGesamt() {
     var sheetGesamt = SpreadsheetApp.getActive().getSheetByName('Resortliste komplett');
     var currentIndexGesamt = RESORT_GESAMT_LISTE_START_ROW;
 
-    for (const[sheetName, resortName]of Object.entries(SHEET_NAME_TO_RESORT_NAME)) {
+    for (const [sheetName, resortName] of Object.entries(SHEET_NAME_TO_RESORT_NAME)) {
         console.log('Starte Verarbeitung von Sheet: ' + sheetName);
 
         var sheetResort = SpreadsheetApp.getActive().getSheetByName(sheetName);
@@ -38,7 +38,7 @@ function fillResortListeGesamt() {
         if (anzahlZeilen == 0) {
             console.log('Überspringe Leere Liste von Resort ' + resortName);
             continue;
-        }        
+        }
         console.log(anzahlZeilen);
 
         // Fill GegenstandName
@@ -58,6 +58,8 @@ function fillResortListeGesamt() {
 
         // Indizes hochzählen
         currentIndexGesamt = currentIndexGesamt + anzahlZeilen;
+
+        // TODO Ausgabe Statistik je Resort + Crosscheck
 
         console.log('Verarbeitung Resort ' + resortName + ' mit ' + anzahlZeilen + ' Zeilen abgeschlossen');
     }

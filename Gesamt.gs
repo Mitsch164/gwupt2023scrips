@@ -2,20 +2,22 @@
 
 function fillGesamt() {
 
-    groupGegenstaendeFromResortListeGesamt();
+    let anzahlZeilenBefuellt = groupGegenstaendeFromResortListeGesamt();
 
     resortzuteilungErmitteln();
 
     var sheetGesamt = SpreadsheetApp.getActive().getSheetByName('Gesamt');
     printStandInZelle("C2", sheetGesamt);
-    Browser.msgBox("Resortzuteilung erfolgreich");
+
+    Browser.msgBox("Gesamtliste mit " + anzahlZeilenBefuellt + " Zeilen befüllt.");
 }
 
 function groupGegenstaendeFromResortListeGesamt() {
     var sheetGesamt = SpreadsheetApp.getActive().getSheetByName('Gesamt');
     var sheetResortlisteKomplett = SpreadsheetApp.getActive().getSheetByName('Resortliste komplett');
 
-    // Schritt 1.5: Daten aus Geamt vorladen merken
+    // TODO Daten aus Gesamt vorladen merken - Kategorie / gekauft & geliehen
+    // Anzahl Zeilen passt nicht zur Anzahl im Excel?
 
     var gegenstandZuResortBesorgtsSelbst = {};
     var gegenstandZuKommentarResort = {};
@@ -62,27 +64,7 @@ function groupGegenstaendeFromResortListeGesamt() {
     sheetGesamt.getRange(GESAMT_LISTE_START_ROW, 7, anzahlZeilen, 1).setValues(resortBesorgtsSelbst);
     sheetGesamt.getRange(GESAMT_LISTE_START_ROW, 14, anzahlZeilen, 1).setValues(kommentareResort);
     sheetGesamt.getRange(GESAMT_LISTE_START_ROW, 15, anzahlZeilen, 1).setValues(kommentareMaterial);
-}
-
-function convertIn2dArray(data) {
-    let result = [];
-    data.forEach(row => {
-        let innerArray = [];
-        innerArray.push(row);
-        result.push(innerArray);
-    });
-    return result;
-}
-
-function convertIn2dArrayAndJoinData(data) {
-    let result = [];
-    data.forEach(row => {
-        let innerArray = [];
-        let dataFilteredAndJoined = row.filter(Boolean).join(',');
-        innerArray.push(dataFilteredAndJoined);
-        result.push(innerArray);
-    });
-    return result;
+    return anzahlZeilen;
 }
 
 function resortzuteilungErmitteln() {
@@ -123,7 +105,4 @@ function resortzuteilungErmitteln() {
             }
         }
     }
-
-    printStandInZelle("C2", sheetGesamt);
-    Browser.msgBox("Resortzuteilung erfolgreich");
 }
