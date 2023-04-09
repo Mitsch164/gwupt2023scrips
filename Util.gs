@@ -1,4 +1,4 @@
-// Stand 08.04.23
+// Stand 09.04.23
 
 const MAX_ROWS = 500;
 const MAX_ROWS_RESORTLISTE_KOMPLETT = 2000;
@@ -17,7 +17,9 @@ function mergeMap(map, key, valueData) {
     if (!valueInMap) {
         valueInMap = [];
     }
-    valueInMap.push(valueData);
+    if (!valueInMap.includes(valueData)) {
+        valueInMap.push(valueData);
+    }
     map[key] = valueInMap;
 }
 
