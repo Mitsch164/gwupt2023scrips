@@ -95,10 +95,10 @@ function groupGegenstaendeFromResortListeGesamt() {
     sheetGesamt.getRange(GESAMT_LISTE_START_ROW, 3, MAX_ROWS, 1).clearContent();
     sheetGesamt.getRange(GESAMT_LISTE_START_ROW, 3, anzahlZeilen, 1).setValues(kategorien);
 
-    //sheetGesamt.getRange(GESAMT_LISTE_START_ROW, 5, MAX_ROWS, 1).clearContent();
+    sheetGesamt.getRange(GESAMT_LISTE_START_ROW, 5, MAX_ROWS, 1).clearContent();
     sheetGesamt.getRange(GESAMT_LISTE_START_ROW, 5, anzahlZeilen, 1).setValues(geliehen);
 
-    //sheetGesamt.getRange(GESAMT_LISTE_START_ROW, 6, MAX_ROWS, 1).clearContent();
+    sheetGesamt.getRange(GESAMT_LISTE_START_ROW, 6, MAX_ROWS, 1).clearContent();
     sheetGesamt.getRange(GESAMT_LISTE_START_ROW, 6, anzahlZeilen, 1).setValues(gekauft);
 
     sheetGesamt.getRange(GESAMT_LISTE_START_ROW, 7, MAX_ROWS, 1).clearContent();

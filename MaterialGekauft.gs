@@ -1,5 +1,5 @@
 // Stand 09.04.23
-const MATERIAL_GEKAUFT_START_ROW = 7s;
+const MATERIAL_GEKAUFT_START_ROW = 7;
 
 // Es werden Daten nur unten angehängt, bestehende Daten werden nicht verändert/ersetzt!
 function fillAndAddMaterialGekauft() {
@@ -42,10 +42,10 @@ function fillAndAddMaterialGekauft() {
         }
     });
 
-    //  Gegenstände die noch nicht da sind unter bestehenden Daten einfügen
+    //  Gegenstände, die noch nicht in "Material Gekauft" Liste enthalten sind ermitteln
     var gegenstandNameInsert = [];
     var anzahlZuKaufenInsert = [];
-    for (const [gegenstandName, anzahlZuKaufen] of Object.entries(gegenstandNameZuAnzahlZuKaufen)) {
+    for (const[gegenstandName, anzahlZuKaufen]of Object.entries(gegenstandNameZuAnzahlZuKaufen)) {
         let schonVorhanden = uebertrageneGegenstaende[gegenstandName];
         if (!schonVorhanden) {
             gegenstandNameInsert.push(gegenstandName);
@@ -53,13 +53,49 @@ function fillAndAddMaterialGekauft() {
         }
     }
 
+    // Link für Kauf + Transport aus Resortliste Gesamt von relevanten Gegenstaenden ermitteln
     let anzahlZeilenToInsert = gegenstandNameInsert.length;
+    if (anzahlZeilenToInsert > 0) {
+        var gegenstandNameZuLink = {};
+        var gegenstandNameZuTransport = {};
+        var sheetResortlisteKomplett = SpreadsheetApp.getActive().getSheetByName('Resortliste komplett');
 
-    if (gegenstandNameInsert.length > 0) {
+        var rangeResortlisteGesamt = sheetResortlisteKomplett.getRange(RESORT_GESAMT_LISTE_START_ROW, 2, MAX_ROWS_RESORTLISTE_KOMPLETT, 11).getValues();
+        console.log(rangeGesamtData.length);
+        var resortListeGesamtFiltered = rangeResortlisteGesamt.filter(function (row) {
+            return gegenstandNameInsert.includes(row[0]);
+        });
+
+        resortListeGesamtFiltered.forEach(function (row) {
+            mergeMap(gegenstandNameZuLink, row[0], row[9]);
+            mergeMap(gegenstandNameZuTransport, row[0], row[10]);
+        });
+
+        // Werte in gleiche Reihenfolge bringen wie einzufügenden Gegenstände
+        var linkInsert = [];
+        var transportInsert = [];
+        gegenstandNameInsert.forEach(gegenstand => {
+            let link = gegenstandNameZuLink[gegenstand];
+            if (link) {
+                linkInsert.push(link);
+            } else {
+                linkInsert.push("");
+            }
+
+            let transport = gegenstandNameZuTransport[gegenstand];
+            if (transport) {
+                transportInsert.push(transport);
+            } else {
+                transportInsert.push("");
+            }
+        });
+
+        // Daten schreiben
         console.log("Schreibe ", anzahlZeilenToInsert, " Zeilen in Gekauft Sheet ab Index ", indexFuerNeueDaten);
         sheetGekauft.getRange(indexFuerNeueDaten, 2, anzahlZeilenToInsert, 1).setValues(convertIn2dArray(gegenstandNameInsert));
         sheetGekauft.getRange(indexFuerNeueDaten, 4, anzahlZeilenToInsert, 1).setValues(convertIn2dArray(anzahlZuKaufenInsert));
-
+        sheetGekauft.getRange(indexFuerNeueDaten, 10, anzahlZeilenToInsert, 1).setValues(convertIn2dArrayAndJoinData(linkInsert));
+        sheetGekauft.getRange(indexFuerNeueDaten, 13, anzahlZeilenToInsert, 1).setValues(convertIn2dArrayAndJoinData(transportInsert));
     }
 
     // Stand befüllen
