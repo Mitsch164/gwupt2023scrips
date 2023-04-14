@@ -65,6 +65,9 @@ function fillResortListeGesamt() {
         console.log('Verarbeitung Resort ' + resortName + ' mit ' + anzahlZeilen + ' Zeilen abgeschlossen');
     }
 
+    // Evtl noch vorhandene zuviele Daten unten löschen
+    sheetGesamt.getRange(currentIndexGesamt, 2, MAX_ROWS_RESORTLISTE_KOMPLETT - currentIndexGesamt, 16).clearContent();
+
     // Stand befüllen
     printStandInZelle("C2", sheetGesamt);
 
