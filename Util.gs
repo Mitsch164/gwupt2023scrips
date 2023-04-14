@@ -1,4 +1,4 @@
-// Stand 09.04.23
+// Stand 14.04.23
 
 const MAX_ROWS = 500;
 const MAX_ROWS_RESORTLISTE_KOMPLETT = 2000;
@@ -21,6 +21,19 @@ function mergeMap(map, key, valueData) {
         valueInMap.push(valueData);
     }
     map[key] = valueInMap;
+}
+
+function cacheWerteZuordnen(gegenstandlist, cacheMap) {
+    result = {};
+    gegenstandlist.forEach(gegenstand => {
+        let cacheEintrag = cacheMap[gegenstand];
+        if (cacheEintrag) {
+            result[gegenstand] = cacheEintrag;
+        } else {
+            result[gegenstand] = "";
+        }
+    });
+    return result;
 }
 
 function convertIn2dArray(data) {

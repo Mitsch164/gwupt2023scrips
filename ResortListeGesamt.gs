@@ -21,7 +21,7 @@ function fillResortListeGesamt() {
     var currentIndexGesamt = RESORT_GESAMT_LISTE_START_ROW;
     var resortStatistik = "";
 
-    for (const [sheetName, resortName] of Object.entries(SHEET_NAME_TO_RESORT_NAME)) {
+    for (const[sheetName, resortName]of Object.entries(SHEET_NAME_TO_RESORT_NAME)) {
         console.log('Starte Verarbeitung von Sheet: ' + sheetName);
 
         var sheetResort = SpreadsheetApp.getActive().getSheetByName(sheetName);

@@ -7,7 +7,7 @@ function fillGesamt() {
     resortzuteilungErmitteln();
 
     var sheetGesamt = SpreadsheetApp.getActive().getSheetByName('Gesamt');
-    printStandInZelle("C2", sheetGesamt);
+    printStandInZelle("E1", sheetGesamt);
 
     Browser.msgBox("Gesamtliste mit " + anzahlZeilenBefuellt + " Zeilen befüllt.");
 }
@@ -48,6 +48,7 @@ function groupGegenstaendeFromResortListeGesamt() {
     var gegenstandZuResortBesorgtsSelbst = {};
     var gegenstandZuKommentarResort = {};
     var gegenstandZuKommentarResortMaterial = {};
+    var gegenstandZuEinheit = {};
 
     // Daten aus Resortliste gesamt lesen
     var rangeResortlisteGesamt = sheetResortlisteKomplett.getRange(5, 2, MAX_ROWS_RESORTLISTE_KOMPLETT, 16).getValues();
@@ -65,6 +66,8 @@ function groupGegenstaendeFromResortListeGesamt() {
                 }
             }
 
+            let einheit = row[4];
+            mergeMap(gegenstandZuEinheit, gegenstandName, einheit);
             let kommentarResort = row[14];
             mergeMap(gegenstandZuKommentarResort, gegenstandName, kommentarResort);
             let kommentarMaterial = row[15];
@@ -78,6 +81,7 @@ function groupGegenstaendeFromResortListeGesamt() {
 
     let gegenstandNamen = convertIn2dArray(Object.keys(gegenstandZuKommentarResort));
     let resortBesorgtsSelbst = convertIn2dArray(Object.values(gegenstandZuResortBesorgtsSelbst));
+    let einheiten = convertIn2dArrayAndJoinData(Object.values(gegenstandZuEinheit));
     let kommentareResort = convertIn2dArrayAndJoinData(Object.values(gegenstandZuKommentarResort));
     let kommentareMaterial = convertIn2dArrayAndJoinData(Object.values(gegenstandZuKommentarResortMaterial));
 
@@ -111,24 +115,14 @@ function groupGegenstaendeFromResortListeGesamt() {
     sheetGesamt.getRange(GESAMT_LISTE_START_ROW, 11, anzahlZeilen, 1).setValues(abzugParalleleNutzung);
 
     sheetGesamt.getRange(GESAMT_LISTE_START_ROW, 15, MAX_ROWS, 1).clearContent();
-    sheetGesamt.getRange(GESAMT_LISTE_START_ROW, 15, anzahlZeilen, 1).setValues(kommentareResort);
+    sheetGesamt.getRange(GESAMT_LISTE_START_ROW, 15, anzahlZeilen, 1).setValues(einheiten);
 
     sheetGesamt.getRange(GESAMT_LISTE_START_ROW, 16, MAX_ROWS, 1).clearContent();
-    sheetGesamt.getRange(GESAMT_LISTE_START_ROW, 16, anzahlZeilen, 1).setValues(kommentareMaterial);
-    return anzahlZeilen;
-}
+    sheetGesamt.getRange(GESAMT_LISTE_START_ROW, 16, anzahlZeilen, 1).setValues(kommentareResort);
 
-function cacheWerteZuordnen(gegenstandlist, cacheMap) {
-    result = {};
-    gegenstandlist.forEach(gegenstand => {
-        let cacheEintrag = cacheMap[gegenstand];
-        if (cacheEintrag) {
-            result[gegenstand] = cacheEintrag;
-        } else {
-            result[gegenstand] = "";
-        }
-    });
-    return result;
+    sheetGesamt.getRange(GESAMT_LISTE_START_ROW, 17, MAX_ROWS, 1).clearContent();
+    sheetGesamt.getRange(GESAMT_LISTE_START_ROW, 17, anzahlZeilen, 1).setValues(kommentareMaterial);
+    return anzahlZeilen;
 }
 
 function resortzuteilungErmitteln() {
