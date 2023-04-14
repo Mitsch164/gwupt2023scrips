@@ -22,17 +22,17 @@ function fillAndAddMaterialGekauft() {
     //  Zu schreibende Gegenstände aus Gesamtsheet ermitteln
     var gegenstandNameZuAnzahlZuKaufen = {};
 
-    var rangeGesamtData = sheetGesamt.getRange(GESAMT_LISTE_START_ROW, 2, MAX_ROWS, 12).getValues();
+    var rangeGesamtData = sheetGesamt.getRange(GESAMT_LISTE_START_ROW, 2, MAX_ROWS, 13).getValues();
     rangeGesamtData.forEach(function (row) {
         let gegenstandName = row[0];
         let zuKaufen = row[4];
         if (zuKaufen == 'x') {
-            let anzahlBenoetigt = row[9];
+            let anzahlBenoetigt = row[10];
             if (anzahlBenoetigt == 0) {
                 console.log('Anzahl benötigt ist 0 für Gegenstand ' + gegenstandName);
                 return;
             }
-            let anzahlVonResortGestellt = row[11];
+            let anzahlVonResortGestellt = row[12];
             let anzahlZuKaufen = anzahlBenoetigt - anzahlVonResortGestellt;
             if (anzahlZuKaufen > 0) {
                 gegenstandNameZuAnzahlZuKaufen[gegenstandName] = anzahlZuKaufen;

@@ -20,8 +20,9 @@ function groupGegenstaendeFromResortListeGesamt() {
     var cacheGegenstandZuKategorie = {};
     var cacheGegenstandZuGeliehen = {};
     var cachgeGegenstandZuGekauft = {};
+    var cacheGegenstandZuAbzugParallelNutzung = {};
 
-    var rangeVorhandeneDatenGesamt = sheetGesamt.getRange(GESAMT_LISTE_START_ROW, 2, MAX_ROWS, 5).getValues();
+    var rangeVorhandeneDatenGesamt = sheetGesamt.getRange(GESAMT_LISTE_START_ROW, 2, MAX_ROWS, 10).getValues();
     rangeVorhandeneDatenGesamt.forEach(function (row) {
         let gegenstandName = row[0];
         if (gegenstandName) {
@@ -36,6 +37,10 @@ function groupGegenstaendeFromResortListeGesamt() {
             let gekauft = row[4];
             if (gekauft) {
                 cachgeGegenstandZuGekauft[gegenstandName] = gekauft;
+            }
+            let abzugParalleleNutzung = row[9];
+            if (abzugParalleleNutzung) {
+                cacheGegenstandZuAbzugParallelNutzung[gegenstandName] = abzugParalleleNutzung;
             }
         }
     });
@@ -83,13 +88,11 @@ function groupGegenstaendeFromResortListeGesamt() {
     let geliehen = convertIn2dArray(Object.values(gegenstandNameZuGeliehen));
     let gegenstandNameZuGekauft = cacheWerteZuordnen(gegenstandNamenResortListeGesamt, cachgeGegenstandZuGekauft);
     let gekauft = convertIn2dArray(Object.values(gegenstandNameZuGekauft));
-
-    console.log(JSON.stringify(gegenstandNameZuGeliehen));
-    console.log(JSON.stringify(geliehen));
-
-    console.log(gegenstandNamen.length, resortBesorgtsSelbst.length, kommentareResort.length, kommentareMaterial.length, kategorien.length, geliehen.length, gekauft.length);
+    let gegenstandZuAbzugParalleleNutzung = cacheWerteZuordnen(gegenstandNamenResortListeGesamt, cacheGegenstandZuAbzugParallelNutzung);
+    let abzugParalleleNutzung = convertIn2dArray(Object.values(gegenstandZuAbzugParalleleNutzung));
 
     // Daten in Gesamtliste schreiben
+    sheetGesamt.getRange(GESAMT_LISTE_START_ROW, 2, MAX_ROWS, 1).clearContent();
     sheetGesamt.getRange(GESAMT_LISTE_START_ROW, 2, anzahlZeilen, 1).setValues(gegenstandNamen);
 
     sheetGesamt.getRange(GESAMT_LISTE_START_ROW, 3, MAX_ROWS, 1).clearContent();
@@ -104,8 +107,14 @@ function groupGegenstaendeFromResortListeGesamt() {
     sheetGesamt.getRange(GESAMT_LISTE_START_ROW, 7, MAX_ROWS, 1).clearContent();
     sheetGesamt.getRange(GESAMT_LISTE_START_ROW, 7, anzahlZeilen, 1).setValues(resortBesorgtsSelbst);
 
-    sheetGesamt.getRange(GESAMT_LISTE_START_ROW, 14, anzahlZeilen, 1).setValues(kommentareResort);
-    sheetGesamt.getRange(GESAMT_LISTE_START_ROW, 15, anzahlZeilen, 1).setValues(kommentareMaterial);
+    sheetGesamt.getRange(GESAMT_LISTE_START_ROW, 11, MAX_ROWS, 1).clearContent();
+    sheetGesamt.getRange(GESAMT_LISTE_START_ROW, 11, anzahlZeilen, 1).setValues(abzugParalleleNutzung);
+
+    sheetGesamt.getRange(GESAMT_LISTE_START_ROW, 15, MAX_ROWS, 1).clearContent();
+    sheetGesamt.getRange(GESAMT_LISTE_START_ROW, 15, anzahlZeilen, 1).setValues(kommentareResort);
+
+    sheetGesamt.getRange(GESAMT_LISTE_START_ROW, 16, MAX_ROWS, 1).clearContent();
+    sheetGesamt.getRange(GESAMT_LISTE_START_ROW, 16, anzahlZeilen, 1).setValues(kommentareMaterial);
     return anzahlZeilen;
 }
 
@@ -141,6 +150,7 @@ function resortzuteilungErmitteln() {
     }
 
     // Zuteilung in Gesamtliste eintragen
+    sheetGesamt.getRange(GESAMT_LISTE_START_ROW, 4, MAX_ROWS, 1).clearContent();
     var gesamtListeGegenstaende = sheetGesamt.getRange(7, 2, MAX_ROWS).getValues();
     var gesamtListeResorts = sheetGesamt.getRange(7, 4, MAX_ROWS);
 
