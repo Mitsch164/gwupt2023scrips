@@ -1,4 +1,4 @@
-// Stand 09.04.23
+// Stand 14.04.23
 const MATERIAL_GEKAUFT_START_ROW = 7;
 
 // Es werden Daten nur unten angehängt, bestehende Daten werden nicht verändert/ersetzt!
@@ -7,20 +7,20 @@ function fillAndAddMaterialGekauft() {
     var sheetGekauft = SpreadsheetApp.getActive().getSheetByName('Material gekauft');
 
     //  Sheet Gekauft: bisher ausgefüllte Gegenstände und max Zeilen anzahl ermitteln
-    var uebertrageneGegenstaende = {};
+    var uebertrageneGegenstaende = [];
     var indexFuerNeueDaten = MATERIAL_GEKAUFT_START_ROW;
 
     var rangeMaterialDataVorhanden = sheetGekauft.getRange(MATERIAL_GEKAUFT_START_ROW, 2, MAX_ROWS, 1).getValues();
     rangeMaterialDataVorhanden.forEach(function (row) {
         let gegenstandName = row[0];
         if (gegenstandName) {
-            uebertrageneGegenstaende[gegenstandName] = "yes";
+            uebertrageneGegenstaende.push(gegenstandName);
             indexFuerNeueDaten++;
         }
     });
 
     //  Zu schreibende Gegenstände aus Gesamtsheet ermitteln
-    var gegenstandNameZuAnzahlZuKaufen = {};
+    var gegenstandNameZuUebertragen = [];
 
     var rangeGesamtData = sheetGesamt.getRange(GESAMT_LISTE_START_ROW, 2, MAX_ROWS, 13).getValues();
     rangeGesamtData.forEach(function (row) {
@@ -32,26 +32,14 @@ function fillAndAddMaterialGekauft() {
                 console.log('Anzahl benötigt ist 0 für Gegenstand ' + gegenstandName);
                 return;
             }
-            let anzahlVonResortGestellt = row[12];
-            let anzahlZuKaufen = anzahlBenoetigt - anzahlVonResortGestellt;
-            if (anzahlZuKaufen > 0) {
-                gegenstandNameZuAnzahlZuKaufen[gegenstandName] = anzahlZuKaufen;
-            } else {
-                console.log("Nichts zu kaufen für Gegenstand " + gegenstandName);
-            }
+            gegenstandNameZuUebertragen.push(gegenstandName);
         }
     });
 
-    //  Gegenstände, die noch nicht in "Material Gekauft" Liste enthalten sind ermitteln
+    // Gegenstände, die noch nicht in "Material Gekauft" Liste enthalten sind ermitteln
     var gegenstandNameInsert = [];
-    var anzahlZuKaufenInsert = [];
-    for (const[gegenstandName, anzahlZuKaufen]of Object.entries(gegenstandNameZuAnzahlZuKaufen)) {
-        let schonVorhanden = uebertrageneGegenstaende[gegenstandName];
-        if (!schonVorhanden) {
-            gegenstandNameInsert.push(gegenstandName);
-            anzahlZuKaufenInsert.push(anzahlZuKaufen);
-        }
-    }
+    gegenstandNameInsert = gegenstandNameZuUebertragen.filter(gegenstand => !uebertrageneGegenstaende.includes(gegenstand));
+    console.log(gegenstandNameInsert);
 
     // Link für Kauf + Transport aus Resortliste Gesamt von relevanten Gegenstaenden ermitteln
     let anzahlZeilenToInsert = gegenstandNameInsert.length;
@@ -61,7 +49,6 @@ function fillAndAddMaterialGekauft() {
         var sheetResortlisteKomplett = SpreadsheetApp.getActive().getSheetByName('Resortliste komplett');
 
         var rangeResortlisteGesamt = sheetResortlisteKomplett.getRange(RESORT_GESAMT_LISTE_START_ROW, 2, MAX_ROWS_RESORTLISTE_KOMPLETT, 11).getValues();
-        console.log(rangeGesamtData.length);
         var resortListeGesamtFiltered = rangeResortlisteGesamt.filter(function (row) {
             return gegenstandNameInsert.includes(row[0]);
         });
@@ -93,7 +80,6 @@ function fillAndAddMaterialGekauft() {
         // Daten schreiben
         console.log("Schreibe ", anzahlZeilenToInsert, " Zeilen in Gekauft Sheet ab Index ", indexFuerNeueDaten);
         sheetGekauft.getRange(indexFuerNeueDaten, 2, anzahlZeilenToInsert, 1).setValues(convertIn2dArray(gegenstandNameInsert));
-        sheetGekauft.getRange(indexFuerNeueDaten, 4, anzahlZeilenToInsert, 1).setValues(convertIn2dArray(anzahlZuKaufenInsert));
         sheetGekauft.getRange(indexFuerNeueDaten, 10, anzahlZeilenToInsert, 1).setValues(convertIn2dArrayAndJoinData(linkInsert));
         sheetGekauft.getRange(indexFuerNeueDaten, 13, anzahlZeilenToInsert, 1).setValues(convertIn2dArrayAndJoinData(transportInsert));
     }
@@ -101,5 +87,4 @@ function fillAndAddMaterialGekauft() {
     // Stand befüllen
     printStandInZelle("B2", sheetGekauft);
     Browser.msgBox(anzahlZeilenToInsert + " Datensätze eingefügt/ergänzt");
-
 }
