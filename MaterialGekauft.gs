@@ -46,6 +46,7 @@ function fillAndAddMaterialGekauft() {
     if (anzahlZeilenToInsert > 0) {
         var gegenstandNameZuLink = {};
         var gegenstandNameZuTransport = {};
+
         var sheetResortlisteKomplett = SpreadsheetApp.getActive().getSheetByName('Resortliste komplett');
 
         var rangeResortlisteGesamt = sheetResortlisteKomplett.getRange(RESORT_GESAMT_LISTE_START_ROW, 2, MAX_ROWS_RESORTLISTE_KOMPLETT, 11).getValues();
@@ -80,8 +81,8 @@ function fillAndAddMaterialGekauft() {
         // Daten schreiben
         console.log("Schreibe ", anzahlZeilenToInsert, " Zeilen in Gekauft Sheet ab Index ", indexFuerNeueDaten);
         sheetGekauft.getRange(indexFuerNeueDaten, 2, anzahlZeilenToInsert, 1).setValues(convertIn2dArray(gegenstandNameInsert));
-        sheetGekauft.getRange(indexFuerNeueDaten, 10, anzahlZeilenToInsert, 1).setValues(convertIn2dArrayAndJoinData(linkInsert));
-        sheetGekauft.getRange(indexFuerNeueDaten, 13, anzahlZeilenToInsert, 1).setValues(convertIn2dArrayAndJoinData(transportInsert));
+        sheetGekauft.getRange(indexFuerNeueDaten, 11, anzahlZeilenToInsert, 1).setValues(convertIn2dArrayAndJoinData(linkInsert));
+        sheetGekauft.getRange(indexFuerNeueDaten, 14, anzahlZeilenToInsert, 1).setValues(convertIn2dArrayAndJoinData(transportInsert));
     }
 
     // Stand befüllen
