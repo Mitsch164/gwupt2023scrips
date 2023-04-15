@@ -1,4 +1,4 @@
-// Stand 14.04.23
+// Stand 15.04.23
 const MATERIAL_GEKAUFT_START_ROW = 7;
 
 // Es werden Daten nur unten angehängt, bestehende Daten werden nicht verändert/ersetzt!
@@ -41,15 +41,16 @@ function fillAndAddMaterialGekauft() {
     gegenstandNameInsert = gegenstandNameZuUebertragen.filter(gegenstand => !uebertrageneGegenstaende.includes(gegenstand));
     console.log(gegenstandNameInsert);
 
-    // Link für Kauf + Transport aus Resortliste Gesamt von relevanten Gegenstaenden ermitteln
+    // Link für Kauf + Transport + Transport Besonderheiten aus Resortliste Gesamt von relevanten Gegenstaenden ermitteln
     let anzahlZeilenToInsert = gegenstandNameInsert.length;
     if (anzahlZeilenToInsert > 0) {
         var gegenstandNameZuLink = {};
         var gegenstandNameZuTransport = {};
+        var gegenstandNameZuBesonderheitTransport = {};
 
         var sheetResortlisteKomplett = SpreadsheetApp.getActive().getSheetByName('Resortliste komplett');
 
-        var rangeResortlisteGesamt = sheetResortlisteKomplett.getRange(RESORT_GESAMT_LISTE_START_ROW, 2, MAX_ROWS_RESORTLISTE_KOMPLETT, 11).getValues();
+        var rangeResortlisteGesamt = sheetResortlisteKomplett.getRange(RESORT_GESAMT_LISTE_START_ROW, 2, MAX_ROWS_RESORTLISTE_KOMPLETT, 12).getValues();
         var resortListeGesamtFiltered = rangeResortlisteGesamt.filter(function (row) {
             return gegenstandNameInsert.includes(row[0]);
         });
@@ -57,11 +58,13 @@ function fillAndAddMaterialGekauft() {
         resortListeGesamtFiltered.forEach(function (row) {
             mergeMap(gegenstandNameZuLink, row[0], row[9]);
             mergeMap(gegenstandNameZuTransport, row[0], row[10]);
+            mergeMap(gegenstandNameZuBesonderheitTransport, row[0], row[11]);
         });
 
         // Werte in gleiche Reihenfolge bringen wie einzufügenden Gegenstände
         var linkInsert = [];
         var transportInsert = [];
+        var transportBesonderheitInsert = [];
         gegenstandNameInsert.forEach(gegenstand => {
             let link = gegenstandNameZuLink[gegenstand];
             if (link) {
@@ -76,6 +79,13 @@ function fillAndAddMaterialGekauft() {
             } else {
                 transportInsert.push("");
             }
+
+            let transportBesonderheit = gegenstandNameZuBesonderheitTransport[gegenstand];
+            if (transportBesonderheit) {
+                transportBesonderheitInsert.push(transportBesonderheit);
+            } else {
+                transportBesonderheitInsert.push("");
+            }
         });
 
         // Daten schreiben
@@ -83,6 +93,7 @@ function fillAndAddMaterialGekauft() {
         sheetGekauft.getRange(indexFuerNeueDaten, 2, anzahlZeilenToInsert, 1).setValues(convertIn2dArray(gegenstandNameInsert));
         sheetGekauft.getRange(indexFuerNeueDaten, 11, anzahlZeilenToInsert, 1).setValues(convertIn2dArrayAndJoinData(linkInsert));
         sheetGekauft.getRange(indexFuerNeueDaten, 14, anzahlZeilenToInsert, 1).setValues(convertIn2dArrayAndJoinData(transportInsert));
+        sheetGekauft.getRange(indexFuerNeueDaten, 15, anzahlZeilenToInsert, 1).setValues(convertIn2dArrayAndJoinData(transportBesonderheitInsert));
     }
 
     // Stand befüllen
