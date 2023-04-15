@@ -30,7 +30,7 @@ function fillMaterialGeliehen() {
         }
     });
     let cacheSize = Object.keys(cacheNameAusleiherZuGeliefert).length + Object.keys(cacheNameAusleiherZuKommentar).length;
-    console.log(cacheSize +" Einträge gecached");
+    console.log(cacheSize + " Einträge gecached");
 
     // Einträge mit "Resort besorgts selbst" aus Resortliste-Gesamt lesen
     var nameResortZuName = {};
@@ -38,8 +38,9 @@ function fillMaterialGeliehen() {
     var nameResortZuAnzahl = {};
     var nameResortZuEinheit = {};
     var nameResortZuTransport = {};
+    var nameResortZuTransportBesonderheit = {};
 
-    var rangeResortlisteGesamt = sheetResortlisteKomplett.getRange(RESORT_GESAMT_LISTE_START_ROW, 2, MAX_ROWS_RESORTLISTE_KOMPLETT, 11).getValues();
+    var rangeResortlisteGesamt = sheetResortlisteKomplett.getRange(RESORT_GESAMT_LISTE_START_ROW, 2, MAX_ROWS_RESORTLISTE_KOMPLETT, 12).getValues();
     rangeResortlisteGesamtFiltered = rangeResortlisteGesamt.filter(row => row[8] == 'Resort');
     rangeResortlisteGesamtFiltered.forEach(function (row) {
         let gegenstandName = row[0];
@@ -54,8 +55,10 @@ function fillMaterialGeliehen() {
             nameResortZuAnzahl[key] = anzahl;
             let einheit = row[4];
             nameResortZuEinheit[key] = einheit;
-            let transport = row[10]
-                nameResortZuTransport[key] = transport;
+            let transport = row[10];
+            nameResortZuTransport[key] = transport;
+            let transportBesonderheit = row[11];
+            nameResortZuTransportBesonderheit[key] = transportBesonderheit;
         } else {
             throw new Error("Feld für Map Key nicht gesetzt in ResortListeGesamt");
         }
@@ -74,6 +77,7 @@ function fillMaterialGeliehen() {
     let anzahl = convertIn2dArray(Object.values(nameResortZuAnzahl));
     let einheit = convertIn2dArray(Object.values(nameResortZuEinheit));
     let transport = convertIn2dArray(Object.values(nameResortZuTransport));
+    let transportBesonderheit = convertIn2dArray(Object.values(nameResortZuTransportBesonderheit));
 
     // Gecachte Daten aus ursprünglicher Liste zuordnen
     let nameAusleiherZuGeliefert = cacheWerteZuordnen(keys, cacheNameAusleiherZuGeliefert);
@@ -102,6 +106,9 @@ function fillMaterialGeliehen() {
 
     sheetGeliehen.getRange(MATERIAL_GELIEHEN_START_ROW, 10, MAX_ROWS, 1).clearContent();
     sheetGeliehen.getRange(MATERIAL_GELIEHEN_START_ROW, 10, anzahlZeilen, 1).setValues(transport);
+
+    sheetGeliehen.getRange(MATERIAL_GELIEHEN_START_ROW, 11, MAX_ROWS, 1).clearContent();
+    sheetGeliehen.getRange(MATERIAL_GELIEHEN_START_ROW, 11, anzahlZeilen, 1).setValues(transportBesonderheit);
 
     printStandInZelle("B3", sheetGeliehen);
     Browser.msgBox("Material geliehen mit " + anzahlZeilen + " Zeilen befüllt.");
