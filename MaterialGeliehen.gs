@@ -1,4 +1,4 @@
-// Stand 14.04.23
+// Stand 15.04.23
 const MATERIAL_GELIEHEN_START_ROW = 8;
 
 function fillMaterialGeliehen() {
@@ -10,30 +10,33 @@ function fillMaterialGeliehen() {
     var cacheNameAusleiherZuGeliefert = {};
     var cacheNameAusleiherZuKommentar = {};
 
-    var rangeVorhandeneDatenGesamt = sheetGeliehen.getRange(MATERIAL_GELIEHEN_START_ROW, 2, MAX_ROWS, 7).getValues();
+    var rangeVorhandeneDatenGesamt = sheetGeliehen.getRange(MATERIAL_GELIEHEN_START_ROW, 2, MAX_ROWS, 8).getValues();
     rangeVorhandeneDatenGesamt.forEach(function (row) {
 
         let gegenstandName = row[0];
-        let ausleiher = row[5];
+        let ausleiher = row[6];
         if (gegenstandName && ausleiher) {
             let key = gegenstandName + '_' + ausleiher;
 
-            let geliefert = row[3];
+            let geliefert = row[4];
             if (geliefert) {
                 cacheNameAusleiherZuGeliefert[key] = geliefert;
             }
 
-            let kommentar = row[6];
+            let kommentar = row[7];
             if (kommentar) {
                 cacheNameAusleiherZuKommentar[key] = kommentar;
             }
         }
     });
+    let cacheSize = Object.keys(cacheNameAusleiherZuGeliefert).length + Object.keys(cacheNameAusleiherZuKommentar).length;
+    console.log(cacheSize +" Einträge gecached");
 
     // Einträge mit "Resort besorgts selbst" aus Resortliste-Gesamt lesen
     var nameResortZuName = {};
     var nameResortZuResort = {};
     var nameResortZuAnzahl = {};
+    var nameResortZuEinheit = {};
     var nameResortZuTransport = {};
 
     var rangeResortlisteGesamt = sheetResortlisteKomplett.getRange(RESORT_GESAMT_LISTE_START_ROW, 2, MAX_ROWS_RESORTLISTE_KOMPLETT, 11).getValues();
@@ -49,6 +52,8 @@ function fillMaterialGeliehen() {
 
             let anzahl = row[3];
             nameResortZuAnzahl[key] = anzahl;
+            let einheit = row[4];
+            nameResortZuEinheit[key] = einheit;
             let transport = row[10]
                 nameResortZuTransport[key] = transport;
         } else {
@@ -67,6 +72,7 @@ function fillMaterialGeliehen() {
     let gegenstandNamen = convertIn2dArray(Object.values(nameResortZuName));
     let resort = convertIn2dArray(Object.values(nameResortZuResort));
     let anzahl = convertIn2dArray(Object.values(nameResortZuAnzahl));
+    let einheit = convertIn2dArray(Object.values(nameResortZuEinheit));
     let transport = convertIn2dArray(Object.values(nameResortZuTransport));
 
     // Gecachte Daten aus ursprünglicher Liste zuordnen
@@ -83,16 +89,19 @@ function fillMaterialGeliehen() {
     sheetGeliehen.getRange(MATERIAL_GELIEHEN_START_ROW, 4, anzahlZeilen, 1).setValues(anzahl);
 
     sheetGeliehen.getRange(MATERIAL_GELIEHEN_START_ROW, 5, MAX_ROWS, 1).clearContent();
-    sheetGeliehen.getRange(MATERIAL_GELIEHEN_START_ROW, 5, anzahlZeilen, 1).setValues(geliefert);
+    sheetGeliehen.getRange(MATERIAL_GELIEHEN_START_ROW, 5, anzahlZeilen, 1).setValues(einheit);
 
-    sheetGeliehen.getRange(MATERIAL_GELIEHEN_START_ROW, 7, MAX_ROWS, 1).clearContent();
-    sheetGeliehen.getRange(MATERIAL_GELIEHEN_START_ROW, 7, anzahlZeilen, 1).setValues(resort);
+    sheetGeliehen.getRange(MATERIAL_GELIEHEN_START_ROW, 6, MAX_ROWS, 1).clearContent();
+    sheetGeliehen.getRange(MATERIAL_GELIEHEN_START_ROW, 6, anzahlZeilen, 1).setValues(geliefert);
 
     sheetGeliehen.getRange(MATERIAL_GELIEHEN_START_ROW, 8, MAX_ROWS, 1).clearContent();
-    sheetGeliehen.getRange(MATERIAL_GELIEHEN_START_ROW, 8, anzahlZeilen, 1).setValues(kommentar);
+    sheetGeliehen.getRange(MATERIAL_GELIEHEN_START_ROW, 8, anzahlZeilen, 1).setValues(resort);
 
     sheetGeliehen.getRange(MATERIAL_GELIEHEN_START_ROW, 9, MAX_ROWS, 1).clearContent();
-    sheetGeliehen.getRange(MATERIAL_GELIEHEN_START_ROW, 9, anzahlZeilen, 1).setValues(transport);
+    sheetGeliehen.getRange(MATERIAL_GELIEHEN_START_ROW, 9, anzahlZeilen, 1).setValues(kommentar);
+
+    sheetGeliehen.getRange(MATERIAL_GELIEHEN_START_ROW, 10, MAX_ROWS, 1).clearContent();
+    sheetGeliehen.getRange(MATERIAL_GELIEHEN_START_ROW, 10, anzahlZeilen, 1).setValues(transport);
 
     printStandInZelle("B3", sheetGeliehen);
     Browser.msgBox("Material geliehen mit " + anzahlZeilen + " Zeilen befüllt.");
