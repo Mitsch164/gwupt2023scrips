@@ -1,4 +1,4 @@
-// Stand 14.04.23
+// Stand 16.04.23
 
 
 const SHEET_NAME_TO_RESORT_NAME = {
@@ -42,8 +42,13 @@ function fillResortListeGesamt() {
         }
 
         // Fill GegenstandName
-        var resorGegenstaende = sheetResort.getRange(RESORT_LISTE_START_ROW, 2, anzahlZeilen, 1).getValues();
-        sheetGesamt.getRange(currentIndexGesamt, 2, anzahlZeilen, 1).setValues(resorGegenstaende);
+        var resortGegenstaende = sheetResort.getRange(RESORT_LISTE_START_ROW, 2, anzahlZeilen, 1).getValues();
+        var resortGegenstaendeNamenTrimmed = [];
+        resortGegenstaende.forEach(row => {
+            let gegenstandName = row[0];
+            resortGegenstaendeNamenTrimmed.push(gegenstandName.trim());
+        });
+        sheetGesamt.getRange(currentIndexGesamt, 2, anzahlZeilen, 1).setValues(convertIn2dArray(resortGegenstaendeNamenTrimmed));
 
         // Fill Resort name
         sheetGesamt.getRange(currentIndexGesamt, 4, anzahlZeilen, 1).setValue(resortName);
