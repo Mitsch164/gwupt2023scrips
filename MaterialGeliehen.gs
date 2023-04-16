@@ -52,13 +52,13 @@ function fillMaterialGeliehen() {
             nameResortZuResort[key] = resort;
 
             let anzahl = row[3];
-            nameResortZuAnzahl[key] = anzahl;
+            mergeMap(nameResortZuAnzahl, key, anzahl);
             let einheit = row[4];
-            nameResortZuEinheit[key] = einheit;
+            mergeMap(nameResortZuEinheit, key, einheit);
             let transport = row[10];
-            nameResortZuTransport[key] = transport;
+            mergeMap(nameResortZuTransport, key, transport);
             let transportBesonderheit = row[11];
-            nameResortZuTransportBesonderheit[key] = transportBesonderheit;
+            mergeMap(nameResortZuTransportBesonderheit, key, transportBesonderheit);
         } else {
             throw new Error("Feld für Map Key nicht gesetzt in ResortListeGesamt");
         }
@@ -74,10 +74,10 @@ function fillMaterialGeliehen() {
 
     let gegenstandNamen = convertIn2dArray(Object.values(nameResortZuName));
     let resort = convertIn2dArray(Object.values(nameResortZuResort));
-    let anzahl = convertIn2dArray(Object.values(nameResortZuAnzahl));
-    let einheit = convertIn2dArray(Object.values(nameResortZuEinheit));
-    let transport = convertIn2dArray(Object.values(nameResortZuTransport));
-    let transportBesonderheit = convertIn2dArray(Object.values(nameResortZuTransportBesonderheit));
+    let anzahl = convertIn2dArrayAndSumData(Object.values(nameResortZuAnzahl));
+    let einheit = convertIn2dArrayAndJoinData(Object.values(nameResortZuEinheit));
+    let transport = convertIn2dArrayAndJoinData(Object.values(nameResortZuTransport));
+    let transportBesonderheit = convertIn2dArrayAndJoinData(Object.values(nameResortZuTransportBesonderheit));
 
     // Gecachte Daten aus ursprünglicher Liste zuordnen
     let nameAusleiherZuGeliefert = cacheWerteZuordnen(keys, cacheNameAusleiherZuGeliefert);

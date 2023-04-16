@@ -1,6 +1,6 @@
-// Stand 14.04.23
+// Stand 16.04.23
 
-const MAX_ROWS = 600;
+const MAX_ROWS = 750;
 const MAX_ROWS_RESORTLISTE_KOMPLETT = 2000;
 const RESORT_LISTE_START_ROW = 8;
 const RESORT_GESAMT_LISTE_START_ROW = 18;
@@ -52,6 +52,20 @@ function convertIn2dArrayAndJoinData(data) {
         let innerArray = [];
         let dataFilteredAndJoined = row.filter(Boolean).join(',');
         innerArray.push(dataFilteredAndJoined);
+        result.push(innerArray);
+    });
+    return result;
+}
+
+function convertIn2dArrayAndSumData(data) {
+    let result = [];
+    data.forEach(row => {
+        let innerArray = [];
+        let sum = 0;
+        row.filter(Boolean).forEach(anzahl => {
+            sum = sum + anzahl;
+        });
+        innerArray.push(sum);
         result.push(innerArray);
     });
     return result;
