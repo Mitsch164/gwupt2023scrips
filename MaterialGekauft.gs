@@ -28,10 +28,6 @@ function fillAndAddMaterialGekauft() {
         let zuKaufen = row[4];
         if (zuKaufen == 'x') {
             let anzahlBenoetigt = row[10];
-            if (anzahlBenoetigt == 0) {
-                console.log('Anzahl benötigt ist 0 für Gegenstand ' + gegenstandName);
-                return;
-            }
             gegenstandNameZuUebertragen.push(gegenstandName);
         }
     });
