@@ -1,4 +1,4 @@
-// Stand 15.04.23
+// Stand 16.04.23
 const MATERIAL_GEKAUFT_START_ROW = 7;
 
 // Es werden Daten nur unten angehängt, bestehende Daten werden nicht verändert/ersetzt!
@@ -92,8 +92,8 @@ function fillAndAddMaterialGekauft() {
         console.log("Schreibe ", anzahlZeilenToInsert, " Zeilen in Gekauft Sheet ab Index ", indexFuerNeueDaten);
         sheetGekauft.getRange(indexFuerNeueDaten, 2, anzahlZeilenToInsert, 1).setValues(convertIn2dArray(gegenstandNameInsert));
         sheetGekauft.getRange(indexFuerNeueDaten, 11, anzahlZeilenToInsert, 1).setValues(convertIn2dArrayAndJoinData(linkInsert));
-        sheetGekauft.getRange(indexFuerNeueDaten, 14, anzahlZeilenToInsert, 1).setValues(convertIn2dArrayAndJoinData(transportInsert));
-        sheetGekauft.getRange(indexFuerNeueDaten, 15, anzahlZeilenToInsert, 1).setValues(convertIn2dArrayAndJoinData(transportBesonderheitInsert));
+        sheetGekauft.getRange(indexFuerNeueDaten, 15, anzahlZeilenToInsert, 1).setValues(convertIn2dArrayAndJoinData(transportInsert));
+        sheetGekauft.getRange(indexFuerNeueDaten, 16, anzahlZeilenToInsert, 1).setValues(convertIn2dArrayAndJoinData(transportBesonderheitInsert));
     }
 
     // Stand befüllen
