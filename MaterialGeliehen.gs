@@ -1,6 +1,7 @@
 // Stand 08.05.23
 const MATERIAL_GELIEHEN_START_ROW = 8;
 const AUSLEIHLISTE_START_ROW = 8;
+const PRIVATE_AUSLEIHER_SPLIT_REGEX = new RegExp('\\(([a-zA-Z\\s]*:[\\d])\\)[,]?', 'g');
 
 function fillMaterialGeliehen() {
     var sheetGeliehen = SpreadsheetApp.getActive().getSheetByName('Material geliehen');
@@ -83,7 +84,7 @@ function fillMaterialGeliehen() {
         }
     });
 
-    var rangeResortlisteGesamt = sheetResortlisteKomplett.getRange(RESORT_GESAMT_LISTE_START_ROW, 2, MAX_ROWS_RESORTLISTE_KOMPLETT, 12).getValues();
+    var rangeResortlisteGesamt = sheetResortlisteKomplett.getRange(5, 2, MAX_ROWS_RESORTLISTE_KOMPLETT, 12).getValues();
     var resortListeGesamtFiltered = rangeResortlisteGesamt.filter(function (row) {
         return gegenstandNamenAusleihliste.includes(row[0]);
     });
@@ -96,7 +97,7 @@ function fillMaterialGeliehen() {
     // Daten aus Auswahlliste lesen und zu schreibende Daten ergänzen
     var headerInklusiveStammName = sheetAusleihliste.getRange(7, 1, 1, 15).getValues();
 
-    var rangeAusleiherMitAnzahl = sheetAusleihliste.getRange(AUSLEIHLISTE_START_ROW, 1, MAX_ROWS_RESORTLISTE_KOMPLETT, 15).getValues();
+    var rangeAusleiherMitAnzahl = sheetAusleihliste.getRange(AUSLEIHLISTE_START_ROW, 1, MAX_ROWS_RESORTLISTE_KOMPLETT, 16).getValues();
     rangeAusleiherMitAnzahl.forEach(function (row) {
         let gegenstandName = row[0];
         let geliehen = row[2];
@@ -108,7 +109,6 @@ function fillMaterialGeliehen() {
 
                     let stamm = headerInklusiveStammName[0][index];
                     let key = gegenstandName + "_" + stamm;
-                    console.log(key);
 
                     nameAusleiherZuGegenstandName[key] = gegenstandName;
                     nameAusleiherZuAusleiher[key] = stamm;
@@ -126,7 +126,31 @@ function fillMaterialGeliehen() {
             }
 
             // private Ausleiher aufdröseln und zu schreibende Zeilen erzeugen
+            let privateAusleiherString = row[15];
+            if (privateAusleiherString) {
+                let match = [];
+                while (match = PRIVATE_AUSLEIHER_SPLIT_REGEX.exec(privateAusleiherString)) {
+                    let ausleiherUndAnzahl = match[1];
+                    let ausleiherUndAnzahlSplitted = ausleiherUndAnzahl.split(":");
 
+                    let ausleiher = ausleiherUndAnzahlSplitted[0];
+                    let anzahl = ausleiherUndAnzahlSplitted[1];
+                    let key = gegenstandName + "_" + ausleiher;
+
+                    nameAusleiherZuGegenstandName[key] = gegenstandName;
+                    nameAusleiherZuAusleiher[key] = ausleiher;
+                    mergeMap(nameAusleiherZuAnzahl, key, anzahl);
+
+                    let einheit = row[4];
+                    mergeMap(nameAusleiherZuEinheit, key, einheit);
+
+                    let transport = gegenstandNameZuTransportLookup[gegenstandName];
+                    mergeMap(nameAusleiherZuTransport, key, transport);
+
+                    let transportBesonderheit = gegenstandNameZuTransportBesonderheitLookup[gegenstandName];
+                    mergeMap(nameAusleiherZuTransportBesonderheit, key, transportBesonderheit);
+                }
+            }
         }
     });
 
