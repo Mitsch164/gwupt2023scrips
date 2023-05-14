@@ -95,19 +95,20 @@ function fillMaterialGeliehen() {
     });
 
     // Daten aus Auswahlliste lesen und zu schreibende Daten ergänzen
-    var headerInklusiveStammName = sheetAusleihliste.getRange(7, 1, 1, 16).getValues();
+    var headerInklusiveStammName = sheetAusleihliste.getRange(7, 1, 1, 25).getValues();
 
-    var rangeAusleiherMitAnzahl = sheetAusleihliste.getRange(AUSLEIHLISTE_START_ROW, 1, MAX_ROWS_RESORTLISTE_KOMPLETT, 17).getValues();
+    var rangeAusleiherMitAnzahl = sheetAusleihliste.getRange(AUSLEIHLISTE_START_ROW, 1, MAX_ROWS_RESORTLISTE_KOMPLETT, 25).getValues();
     rangeAusleiherMitAnzahl.forEach(function (row) {
         let gegenstandName = row[0];
         let geliehen = row[2];
         if (gegenstandName && geliehen == 'x') {
             // Einzelne Stämme für Gegenstand durchgehen und zu schreibende Zeilen erzeugen
-            for (let index = 8; index <= 15; index++) {
+            for (let index = 8; index <= 22; index=index+2) {
                 let anzahlAusgeliehen = row[index];
                 if (anzahlAusgeliehen) {
 
                     let stamm = headerInklusiveStammName[0][index];
+                    console.log(stamm);
                     let key = gegenstandName + "_" + stamm;
 
                     nameAusleiherZuGegenstandName[key] = gegenstandName;
@@ -126,7 +127,7 @@ function fillMaterialGeliehen() {
             }
 
             // private Ausleiher aufdröseln und zu schreibende Zeilen erzeugen
-            let privateAusleiherString = row[16];
+            let privateAusleiherString = row[24];
             if (privateAusleiherString) {
                 let match = [];
                 while (match = PRIVATE_AUSLEIHER_SPLIT_REGEX.exec(privateAusleiherString)) {
