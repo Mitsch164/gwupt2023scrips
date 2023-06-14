@@ -1,4 +1,7 @@
 // Stand 16.04.23
+
+// TODO Spalte Resort eingefügt, aber keine Ausführung mehr notwendig
+
 const MATERIAL_GEKAUFT_START_ROW = 7;
 
 // Es werden Daten nur unten angehängt, bestehende Daten werden nicht verändert/ersetzt!
@@ -87,9 +90,9 @@ function fillAndAddMaterialGekauft() {
         // Daten schreiben
         console.log("Schreibe ", anzahlZeilenToInsert, " Zeilen in Gekauft Sheet ab Index ", indexFuerNeueDaten);
         sheetGekauft.getRange(indexFuerNeueDaten, 2, anzahlZeilenToInsert, 1).setValues(convertIn2dArray(gegenstandNameInsert));
-        sheetGekauft.getRange(indexFuerNeueDaten, 11, anzahlZeilenToInsert, 1).setValues(convertIn2dArrayAndJoinData(linkInsert));
-        sheetGekauft.getRange(indexFuerNeueDaten, 15, anzahlZeilenToInsert, 1).setValues(convertIn2dArrayAndJoinData(transportInsert));
-        sheetGekauft.getRange(indexFuerNeueDaten, 16, anzahlZeilenToInsert, 1).setValues(convertIn2dArrayAndJoinData(transportBesonderheitInsert));
+        sheetGekauft.getRange(indexFuerNeueDaten, 12, anzahlZeilenToInsert, 1).setValues(convertIn2dArrayAndJoinData(linkInsert));
+        sheetGekauft.getRange(indexFuerNeueDaten, 16, anzahlZeilenToInsert, 1).setValues(convertIn2dArrayAndJoinData(transportInsert));
+        sheetGekauft.getRange(indexFuerNeueDaten, 17, anzahlZeilenToInsert, 1).setValues(convertIn2dArrayAndJoinData(transportBesonderheitInsert));
     }
 
     // Stand befüllen
