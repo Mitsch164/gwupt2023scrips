@@ -1,7 +1,7 @@
-// Stand 08.05.23
+// Stand 06.07.23
 const MATERIAL_GELIEHEN_START_ROW = 8;
 const AUSLEIHLISTE_START_ROW = 8;
-const PRIVATE_AUSLEIHER_SPLIT_REGEX = new RegExp('\\(([a-zA-Z\\s]*:[\\d])\\)[,]?', 'g');
+const PRIVATE_AUSLEIHER_SPLIT_REGEX = new RegExp('\\(([a-zA-Z\\s]*:[\\d]*)\\)[,]?', 'g');
 
 function fillMaterialGeliehen() {
     var sheetGeliehen = SpreadsheetApp.getActive().getSheetByName('Material geliehen');
@@ -95,20 +95,20 @@ function fillMaterialGeliehen() {
     });
 
     // Daten aus Auswahlliste lesen und zu schreibende Daten ergänzen
-    var headerInklusiveStammName = sheetAusleihliste.getRange(7, 1, 1, 29).getValues();
+    var headerInklusiveStammName = sheetAusleihliste.getRange(7, 1, 1, 39).getValues();
 
-    var rangeAusleiherMitAnzahl = sheetAusleihliste.getRange(AUSLEIHLISTE_START_ROW, 1, MAX_ROWS_RESORTLISTE_KOMPLETT, 29).getValues();
+    var rangeAusleiherMitAnzahl = sheetAusleihliste.getRange(AUSLEIHLISTE_START_ROW, 1, MAX_ROWS_RESORTLISTE_KOMPLETT, 39).getValues();
     rangeAusleiherMitAnzahl.forEach(function (row) {
         let gegenstandName = row[0];
         let geliehen = row[2];
         if (gegenstandName && geliehen == 'x') {
             // Einzelne Stämme für Gegenstand durchgehen und zu schreibende Zeilen erzeugen
-            for (let index = 8; index <= 26; index=index+2) {
+            for (let index = 8; index <= 34; index=index+2) {
                 let anzahlAusgeliehen = row[index];
                 if (anzahlAusgeliehen) {
 
                     let stamm = headerInklusiveStammName[0][index];
-                    console.log(stamm);
+                    //console.log(stamm);
                     let key = gegenstandName + "_" + stamm;
 
                     nameAusleiherZuGegenstandName[key] = gegenstandName;
@@ -127,7 +127,7 @@ function fillMaterialGeliehen() {
             }
 
             // private Ausleiher aufdröseln und zu schreibende Zeilen erzeugen
-            let privateAusleiherString = row[28];
+            let privateAusleiherString = row[36];
             if (privateAusleiherString) {
                 let match = [];
                 while (match = PRIVATE_AUSLEIHER_SPLIT_REGEX.exec(privateAusleiherString)) {
@@ -137,6 +137,7 @@ function fillMaterialGeliehen() {
                     let ausleiher = ausleiherUndAnzahlSplitted[0];
                     let anzahl = ausleiherUndAnzahlSplitted[1];
                     let key = gegenstandName + "_" + ausleiher;
+                    //console.log(key);
 
                     nameAusleiherZuGegenstandName[key] = gegenstandName;
                     nameAusleiherZuAusleiher[key] = ausleiher;
