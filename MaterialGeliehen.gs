@@ -1,4 +1,4 @@
-// Stand 06.07.23
+// Stand 10.07.23
 const MATERIAL_GELIEHEN_START_ROW = 8;
 const AUSLEIHLISTE_START_ROW = 8;
 const PRIVATE_AUSLEIHER_SPLIT_REGEX = new RegExp('\\(([a-zA-Z\\s]*:[\\d]*)\\)[,]?', 'g');
@@ -12,7 +12,7 @@ function fillMaterialGeliehen() {
     var cacheNameAusleiherZuGeliefert = {};
     var cacheNameAusleiherZuKommentar = {};
 
-    var rangeVorhandeneDatenGesamt = sheetGeliehen.getRange(MATERIAL_GELIEHEN_START_ROW, 2, MAX_ROWS, 8).getValues();
+    var rangeVorhandeneDatenGesamt = sheetGeliehen.getRange(MATERIAL_GELIEHEN_START_ROW, 2, MAX_ROWS, 9).getValues();
     rangeVorhandeneDatenGesamt.forEach(function (row) {
 
         let gegenstandName = row[0];
@@ -25,7 +25,7 @@ function fillMaterialGeliehen() {
                 cacheNameAusleiherZuGeliefert[key] = geliefert;
             }
 
-            let kommentar = row[7];
+            let kommentar = row[8];
             if (kommentar) {
                 cacheNameAusleiherZuKommentar[key] = kommentar;
             }
@@ -39,6 +39,7 @@ function fillMaterialGeliehen() {
     var nameAusleiherZuAusleiher = {};
     var nameAusleiherZuAnzahl = {};
     var nameAusleiherZuEinheit = {};
+    var nameAusleiherZuKommentarAusleihliste = {};
     var nameAusleiherZuTransport = {};
     var nameAusleiherZuTransportBesonderheit = {};
 
@@ -61,6 +62,9 @@ function fillMaterialGeliehen() {
             mergeMap(nameAusleiherZuTransport, key, transport);
             let transportBesonderheit = row[11];
             mergeMap(nameAusleiherZuTransportBesonderheit, key, transportBesonderheit);
+
+            // In der Gesamtliste gibt es keinen Kommentar des Ausleiher - mit Leerstring befüllen, dass Dimensionen passen
+            mergeMap(nameAusleiherZuKommentarAusleihliste, key, "");
         } else {
             throw new Error("Feld für Map Key nicht gesetzt in ResortListeGesamt");
         }
@@ -118,6 +122,9 @@ function fillMaterialGeliehen() {
                     let einheit = row[4];
                     mergeMap(nameAusleiherZuEinheit, key, einheit);
 
+                    let kommentarAusleiher = row[index + 1];
+                    mergeMap(nameAusleiherZuKommentarAusleihliste, key, kommentarAusleiher);
+
                     let transport = gegenstandNameZuTransportLookup[gegenstandName];
                     mergeMap(nameAusleiherZuTransport, key, transport);
 
@@ -146,6 +153,9 @@ function fillMaterialGeliehen() {
                     let einheit = row[4];
                     mergeMap(nameAusleiherZuEinheit, key, einheit);
 
+                    let kommentarAusleiher = row[37];
+                    mergeMap(nameAusleiherZuKommentarAusleihliste, key, kommentarAusleiher);
+
                     let transport = gegenstandNameZuTransportLookup[gegenstandName];
                     mergeMap(nameAusleiherZuTransport, key, transport);
 
@@ -165,6 +175,7 @@ function fillMaterialGeliehen() {
     let ausleiher = convertIn2dArray(Object.values(nameAusleiherZuAusleiher));
     let anzahl = convertIn2dArrayAndSumData(Object.values(nameAusleiherZuAnzahl));
     let einheit = convertIn2dArrayAndJoinData(Object.values(nameAusleiherZuEinheit));
+    let kommentarAusleiher = convertIn2dArrayAndJoinData(Object.values(nameAusleiherZuKommentarAusleihliste));
     let transport = convertIn2dArrayAndJoinData(Object.values(nameAusleiherZuTransport));
     let transportBesonderheit = convertIn2dArrayAndJoinData(Object.values(nameAusleiherZuTransportBesonderheit));
 
@@ -191,13 +202,16 @@ function fillMaterialGeliehen() {
     sheetGeliehen.getRange(MATERIAL_GELIEHEN_START_ROW, 8, anzahlZeilen, 1).setValues(ausleiher);
 
     sheetGeliehen.getRange(MATERIAL_GELIEHEN_START_ROW, 9, MAX_ROWS, 1).clearContent();
-    sheetGeliehen.getRange(MATERIAL_GELIEHEN_START_ROW, 9, anzahlZeilen, 1).setValues(kommentar);
+    sheetGeliehen.getRange(MATERIAL_GELIEHEN_START_ROW, 9, anzahlZeilen, 1).setValues(kommentarAusleiher);
 
     sheetGeliehen.getRange(MATERIAL_GELIEHEN_START_ROW, 10, MAX_ROWS, 1).clearContent();
-    sheetGeliehen.getRange(MATERIAL_GELIEHEN_START_ROW, 10, anzahlZeilen, 1).setValues(transport);
+    sheetGeliehen.getRange(MATERIAL_GELIEHEN_START_ROW, 10, anzahlZeilen, 1).setValues(kommentar);
 
     sheetGeliehen.getRange(MATERIAL_GELIEHEN_START_ROW, 11, MAX_ROWS, 1).clearContent();
-    sheetGeliehen.getRange(MATERIAL_GELIEHEN_START_ROW, 11, anzahlZeilen, 1).setValues(transportBesonderheit);
+    sheetGeliehen.getRange(MATERIAL_GELIEHEN_START_ROW, 11, anzahlZeilen, 1).setValues(transport);
+
+    sheetGeliehen.getRange(MATERIAL_GELIEHEN_START_ROW, 12, MAX_ROWS, 1).clearContent();
+    sheetGeliehen.getRange(MATERIAL_GELIEHEN_START_ROW, 12, anzahlZeilen, 1).setValues(transportBesonderheit);
 
     printStandInZelle("B3", sheetGeliehen);
     Browser.msgBox("Material geliehen mit " + anzahlZeilen + " Zeilen befüllt.");
