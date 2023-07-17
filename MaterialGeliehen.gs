@@ -1,4 +1,4 @@
-// Stand 10.07.23
+// Stand 17.07.23
 const MATERIAL_GELIEHEN_START_ROW = 8;
 const AUSLEIHLISTE_START_ROW = 8;
 const PRIVATE_AUSLEIHER_SPLIT_REGEX = new RegExp('\\(([a-zA-Z\\s]*:[\\d]*)\\)[,]?', 'g');
@@ -11,8 +11,10 @@ function fillMaterialGeliehen() {
     // Da Gegenstaende in der Regel mehrfach vorkommen wird als Key immer GegenstandName + Ausleiher verwendet
     var cacheNameAusleiherZuGeliefert = {};
     var cacheNameAusleiherZuKommentar = {};
+    var cacheNameAusleiherZuKisteTransport = {};
+    var cacheNameAusleiherZuTransportKommentar = {};
 
-    var rangeVorhandeneDatenGesamt = sheetGeliehen.getRange(MATERIAL_GELIEHEN_START_ROW, 2, MAX_ROWS, 9).getValues();
+    var rangeVorhandeneDatenGesamt = sheetGeliehen.getRange(MATERIAL_GELIEHEN_START_ROW, 2, MAX_ROWS, 13).getValues();
     rangeVorhandeneDatenGesamt.forEach(function (row) {
 
         let gegenstandName = row[0];
@@ -29,9 +31,22 @@ function fillMaterialGeliehen() {
             if (kommentar) {
                 cacheNameAusleiherZuKommentar[key] = kommentar;
             }
+
+            let kisteTransport = row[11];
+            if (kisteTransport) {
+                cacheNameAusleiherZuKisteTransport[key] = kisteTransport;
+            }
+
+            let tansportKommentar = row[12];
+            if (tansportKommentar) {
+                cacheNameAusleiherZuTransportKommentar[key] = tansportKommentar;
+            }
         }
     });
-    let cacheSize = Object.keys(cacheNameAusleiherZuGeliefert).length + Object.keys(cacheNameAusleiherZuKommentar).length;
+    let cacheSize = Object.keys(cacheNameAusleiherZuGeliefert).length
+         + Object.keys(cacheNameAusleiherZuKommentar).length
+         + Object.keys(cacheNameAusleiherZuKisteTransport).length
+         + Object.keys(cacheNameAusleiherZuTransportKommentar).length;
     console.log(cacheSize + " Einträge gecached");
 
     // 2.1) Einträge mit "Resort besorgts selbst" aus Resortliste-Gesamt lesen
@@ -107,7 +122,7 @@ function fillMaterialGeliehen() {
         let geliehen = row[2];
         if (gegenstandName && geliehen == 'x') {
             // Einzelne Stämme für Gegenstand durchgehen und zu schreibende Zeilen erzeugen
-            for (let index = 8; index <= 34; index=index+2) {
+            for (let index = 8; index <= 34; index = index + 2) {
                 let anzahlAusgeliehen = row[index];
                 if (anzahlAusgeliehen) {
 
@@ -184,6 +199,10 @@ function fillMaterialGeliehen() {
     let geliefert = convertIn2dArray(Object.values(nameAusleiherZuGeliefert));
     let nameAusleiherZuKommentar = cacheWerteZuordnen(keys, cacheNameAusleiherZuKommentar);
     let kommentar = convertIn2dArray(Object.values(nameAusleiherZuKommentar));
+    let nameAusleiherZuKisteTransport = cacheWerteZuordnen(keys, cacheNameAusleiherZuKisteTransport);
+    let kisteTransport = convertIn2dArray(Object.values(nameAusleiherZuKisteTransport));
+    let nameAusleiherZuTransportKommentar = cacheWerteZuordnen(keys, cacheNameAusleiherZuTransportKommentar);
+    let transportKommentar = convertIn2dArray(Object.values(nameAusleiherZuTransportKommentar));
 
     // Listeninhalte leeren und neue Daten schreiben
     sheetGeliehen.getRange(MATERIAL_GELIEHEN_START_ROW, 2, MAX_ROWS, 1).clearContent();
@@ -213,7 +232,12 @@ function fillMaterialGeliehen() {
     sheetGeliehen.getRange(MATERIAL_GELIEHEN_START_ROW, 12, MAX_ROWS, 1).clearContent();
     sheetGeliehen.getRange(MATERIAL_GELIEHEN_START_ROW, 12, anzahlZeilen, 1).setValues(transportBesonderheit);
 
+    sheetGeliehen.getRange(MATERIAL_GELIEHEN_START_ROW, 13, MAX_ROWS, 1).clearContent();
+    sheetGeliehen.getRange(MATERIAL_GELIEHEN_START_ROW, 13, anzahlZeilen, 1).setValues(kisteTransport);
+
+    sheetGeliehen.getRange(MATERIAL_GELIEHEN_START_ROW, 14, MAX_ROWS, 1).clearContent();
+    sheetGeliehen.getRange(MATERIAL_GELIEHEN_START_ROW, 14, anzahlZeilen, 1).setValues(transportKommentar);
+
     printStandInZelle("B3", sheetGeliehen);
     Browser.msgBox("Material geliehen mit " + anzahlZeilen + " Zeilen befüllt.");
-
 }
